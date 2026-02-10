@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>We'll be back soon — Maintenance</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#64ffda;--muted:#9aa6b2}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,Segoe UI,Roboto,system-ui,Arial;background:linear-gradient(180deg,#071022 0%,#0f1724 100%);color:#e6eef6;display:flex;align-items:center;justify-content:center}
+    .card{max-width:820px;padding:36px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+    h1{margin:0 0 8px;font-size:28px;letter-spacing:-0.01em}
+    p{margin:0 0 18px;color:var(--muted)}
+    .meta{display:flex;gap:12px;flex-wrap:wrap}
+    .badge{background:rgba(100,255,218,0.08);color:var(--accent);padding:8px 12px;border-radius:999px;font-weight:600;font-size:13px}
+    .note{color:var(--muted);font-size:14px}
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+    a{color:var(--accent);text-decoration:none}
+    @media (max-width:520px){.card{margin:12px;padding:20px}}
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-labelledby="title">
+    <h1 id="title">We'll be back soon</h1>
+    <p>Vedang Cinematography is temporarily offline for maintenance. We're making improvements and will be back shortly.</p>
+
+    <div class="meta">
+      <div class="badge">Temporarily Down for Maintenance</div>
+      <div class="note">Estimated time: usually less than 1 hour</div>
+    </div>
+
+    <footer>
+      <p>If you need to contact us, please email <a href="mailto:contact@vedang.example">contact@vedang.example</a>.</p>
+      <p>Health check endpoint: <a href="/health">/health</a> (remains available)</p>
+    </footer>
+  </main>
+  <script>
+    // Auto-refresh periodically so visitors see the site when it's back
+    setInterval(function(){ fetch('/health').then(function(r){ if(r.ok) location.reload();}).catch(()=>{}); }, 30000);
+  </script>
+</body>
+</html>

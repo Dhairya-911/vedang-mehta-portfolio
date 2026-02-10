@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+const fs = require('fs');
 const connectDB = require('./config/database');
 
 // Import routes
@@ -118,6 +119,34 @@ app.get('/', (req, res) => {
             contact: '/api/contact',
             contactStats: '/api/contact/stats'
         }
+    });
+});
+
+// Maintenance mode middleware: serve temporary "down for maintenance" page when enabled
+const maintenanceFlagPath = path.join(__dirname, '..', 'maintenance.flag');
+
+function maintenanceEnabled() {
+    return process.env.MAINTENANCE === 'true' || fs.existsSync(maintenanceFlagPath);
+}
+
+app.use((req, res, next) => {
+    if (!maintenanceEnabled()) return next();
+
+    // Allow health checks, admin UI and API to continue working during maintenance
+    if (req.path.startsWith('/health') || req.path.startsWith('/admin') || req.path.startsWith('/api')) {
+        return next();
+    }
+
+    // For non-GET requests return JSON 503
+    if (req.method !== 'GET') {
+        res.set('Retry-After', '3600'); // seconds
+        return res.status(503).json({ success: false, message: 'Service temporarily down for maintenance' });
+    }
+
+    // Serve maintenance page for regular GET requests
+    res.set('Retry-After', '3600');
+    res.status(503).sendFile(path.join(__dirname, '..', 'maintenance.html'), (err) => {
+        if (err) next(err);
     });
 });
 
