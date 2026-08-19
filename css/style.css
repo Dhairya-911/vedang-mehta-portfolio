@@ -25,9 +25,12 @@ input, textarea, [contenteditable], [contenteditable="true"] {
     caret-color: transparent !important;
 }
 
-/* GSAP Animation Support */
+/* Base Scrolling & Mobile Touch Support */
 html {
-    scroll-behavior: auto; /* Let GSAP handle smooth scrolling */
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    touch-action: pan-y;
 }
 
 :root {
@@ -49,8 +52,11 @@ body {
     color: var(--text-light);
     background-color: var(--bg-dark);
     overflow-x: hidden;
-    /* Prevent scroll-triggered animations from causing layout shift */
-    will-change: scroll-position;
+    position: relative;
+    min-height: 100%;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: auto;
+    touch-action: pan-y;
 }
 
 /* Optimize elements for animations */
@@ -197,6 +203,7 @@ h1, h2, h3 {
 /* Hero Section */
 .hero {
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -206,10 +213,10 @@ h1, h2, h3 {
         #c0392b;
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
     position: relative;
     overflow: hidden;
     width: 100%;
+    touch-action: pan-y;
 }
 
 .hero-container {
@@ -1866,6 +1873,7 @@ h1, h2, h3 {
 /* Menu Open Body State */
 body.menu-open {
     overflow: hidden;
+    touch-action: none;
 }
 
 body.menu-open .nav-menu {
@@ -1876,7 +1884,7 @@ body.menu-open .nav-menu {
 
 /* Active Navigation Links */
 .nav-link.active {
-    color: #ff6b6b;
+    color: #8b8b6e;
     position: relative;
 }
 
@@ -1887,13 +1895,8 @@ body.menu-open .nav-menu {
     left: 0;
     width: 100%;
     height: 2px;
-    background: #ff6b6b;
+    background: #8b8b6e;
     transform: scaleX(1);
-}
-
-/* Loading State */
-body.loading {
-    overflow: hidden;
 }
 
 body.loaded .reveal-element {
@@ -2051,8 +2054,7 @@ body.loaded .reveal-element {
     /* Prevent body scroll when mobile menu is open */
     body.menu-open {
         overflow: hidden;
-        position: fixed;
-        width: 100%;
+        touch-action: none;
     }
 
     /* Better touch targets - iOS/Android Guidelines */
@@ -2062,17 +2064,16 @@ body.loaded .reveal-element {
     .social-link,
     .menu-toggle {
         min-height: 44px;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        touch-action: manipulation;
     }
 
-    /* Prevent horizontal scroll issues */
-    html, body {
+    /* Prevent horizontal overflow on page wrapper without breaking vertical scroll */
+    .page-wrapper {
         overflow-x: hidden;
         width: 100%;
-        max-width: 100%;
+        position: relative;
     }
 
     /* Better text selection on mobile */
@@ -2540,10 +2541,10 @@ select:focus {
         touch-action: manipulation;
     }
 
-    /* Prevent iOS bounce scroll */
+    /* Smooth momentum scrolling for mobile */
     body {
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior: none;
+        overscroll-behavior-y: auto;
     }
 
     /* Better form controls */

@@ -102,8 +102,9 @@ class OptimizedPortfolio {
         
         if (menuToggle && navMenu) {
             menuToggle.addEventListener('click', () => {
-                menuToggle.classList.toggle('active');
-                navMenu.classList.toggle('active');
+                const isActive = menuToggle.classList.toggle('active');
+                navMenu.classList.toggle('active', isActive);
+                document.body.classList.toggle('menu-open', isActive);
             });
 
             // Close menu when clicking on a link
@@ -112,6 +113,7 @@ class OptimizedPortfolio {
                 link.addEventListener('click', () => {
                     menuToggle.classList.remove('active');
                     navMenu.classList.remove('active');
+                    document.body.classList.remove('menu-open');
                 });
             });
         }
