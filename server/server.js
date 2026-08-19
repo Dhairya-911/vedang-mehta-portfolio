@@ -29,19 +29,19 @@ const allowedOrigins = process.env.CORS_ORIGIN
         'http://127.0.0.1:8000',
         'http://localhost:3000',
         'https://vedang-portfolio.vercel.app',
-        'https://vedang-portfolio.onrender.com'
+        'https://vedang-portfolio-kgdn.onrender.com'
     ];
 
 app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-        
+
         // In development, be more permissive
         if (process.env.NODE_ENV === 'development') {
             return callback(null, true);
         }
-        
+
         if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
@@ -133,7 +133,7 @@ app.use('*', (req, res) => {
 // Global error handler
 app.use((error, req, res, next) => {
     console.error('❌ Global error handler:', error);
-    
+
     res.status(error.status || 500).json({
         success: false,
         message: error.message || 'Internal server error',
