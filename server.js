@@ -20,33 +20,54 @@ app.use(helmet({
 }));
 
 // CORS configuration
-const allowedOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',')
-    : [
-        'http://localhost:5500',
-        'http://127.0.0.1:5500',
-        'http://localhost:8000',
-        'http://127.0.0.1:8000',
-        'http://localhost:3000',
-        'https://vedang-portfolio.vercel.app',
-        'https://vedang-portfolio-kgdn.onrender.com'
-    ];
+const defaultOrigins = [
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'https://vedang-portfolio.vercel.app',
+    'https://vedang-portfolio-kgdn.onrender.com',
+    'https://vedang-portfolio.onrender.com',
+    'https://vedang-cinematography.netlify.app',
+    'https://dhairya-911.github.io'
+];
 
-app.use(cors({
+const envOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
+    : [];
+
+const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
+
+const corsOptions = {
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
+        // Allow requests with no origin (like mobile apps, curl, postman, server-to-server)
         if (!origin) return callback(null, true);
 
-        if (allowedOrigins.indexOf(origin) !== -1) {
+        // Check exact match, wildcard, or common deployment subdomains
+        const isAllowed = allowedOrigins.includes(origin) ||
+            allowedOrigins.includes('*') ||
+            /\.vercel\.app$/.test(origin) ||
+            /\.onrender\.com$/.test(origin) ||
+            /\.netlify\.app$/.test(origin) ||
+            /\.github\.io$/.test(origin);
+
+        if (isAllowed) {
             callback(null, true);
         } else {
-            console.log(`CORS blocked origin: ${origin}`);
-            callback(new Error('Not allowed by CORS'));
+            console.warn(`⚠️ CORS rejected origin: ${origin}`);
+            callback(null, false);
         }
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     optionsSuccessStatus: 200
-}));
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Rate limiting
 const limiter = rateLimit({

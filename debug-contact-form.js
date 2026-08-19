@@ -30,7 +30,7 @@ function checkFormElements() {
 async function testAPIConnection() {
     const apiUrls = [
         'http://localhost:3000/api/contact',
-        'https://vedang-portfolio-backend.onrender.com/api/contact'
+        'https://vedang-portfolio-kgdn.onrender.com/api/contact'
     ];
     
     console.log('🌐 Testing API Connections:');
@@ -68,7 +68,7 @@ async function testFormSubmission() {
     const hostname = window.location.hostname;
     const apiUrl = hostname === 'localhost' || hostname === '127.0.0.1' 
         ? 'http://localhost:3000/api/contact'
-        : 'https://vedang-portfolio-backend.onrender.com/api/contact';
+        : 'https://vedang-portfolio-kgdn.onrender.com/api/contact';
     
     console.log('🧪 Testing Form Submission:');
     console.log('API URL:', apiUrl);

@@ -19,10 +19,12 @@ class ContactFormHandler {
         if (hostname === 'localhost' || hostname === '127.0.0.1') {
             // Development environment
             return 'http://localhost:3000/api/contact';
+        } else if (hostname.includes('onrender.com')) {
+            // If hosted on the same Render service
+            return '/api/contact';
         } else {
-            // Production environment - Update with your actual Render backend URL
-            // Replace 'your-backend-app-name' with your actual Render app name
-            return 'https://vedang-portfolio-backend.onrender.com/api/contact';
+            // Production environment - deployed Render backend
+            return 'https://vedang-portfolio-kgdn.onrender.com/api/contact';
         }
     }
 
