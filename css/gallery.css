@@ -390,16 +390,17 @@
 /* Responsive Design for Gallery */
 @media (max-width: 768px) {
     .page-header {
-        padding: 120px 1rem 80px;
+        padding: 120px 1rem 60px;
     }
     
     .page-title {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
+        font-size: clamp(1.8rem, 6vw, 2.5rem);
+        margin-bottom: 0.8rem;
+        word-break: break-word;
     }
     
     .page-subtitle {
-        font-size: 1rem;
+        font-size: clamp(0.9rem, 3.4vw, 1.05rem);
         margin-bottom: 1rem;
     }
 
@@ -409,102 +410,110 @@
     
     .gallery-intro {
         padding: 0 1rem;
-        margin-bottom: 3rem;
+        margin-bottom: 2.5rem;
     }
 
     .gallery-description {
-        font-size: 1rem;
+        font-size: clamp(0.9rem, 3.4vw, 1.05rem);
         line-height: 1.6;
     }
     
-    .gallery-grid { padding: 0 1rem; }
+    .gallery-grid { 
+        padding: 0 1rem; 
+        box-sizing: border-box;
+    }
     
     .gallery-item {
-        border-radius: 8px;
+        border-radius: 10px;
     }
 
     .gallery-item.tall,
-    .gallery-item.wide { width: 100%; margin-bottom: 1rem; }
+    .gallery-item.wide { 
+        width: 100%; 
+        margin-bottom: 1rem; 
+    }
     
     .gallery-overlay {
         position: relative;
         transform: translateY(0);
         background: rgba(90, 90, 71, 0.9);
-        padding: 1.5rem;
+        padding: 1.25rem;
         opacity: 1;
         backdrop-filter: blur(5px);
     }
 
     .gallery-overlay h3 {
-        font-size: 1.3rem;
-        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+        margin-bottom: 0.4rem;
     }
 
     .gallery-overlay p {
-        font-size: 0.9rem;
+        font-size: 0.88rem;
     }
     
     .gallery-cta {
-        margin-top: 3rem;
+        margin-top: 2.5rem;
         padding: 2rem 1rem;
         text-align: center;
     }
     
     .gallery-cta h2 {
-        font-size: 1.8rem;
-        margin-bottom: 1rem;
+        font-size: clamp(1.5rem, 5vw, 1.8rem);
+        margin-bottom: 0.8rem;
     }
 
     .gallery-cta p {
-        font-size: 1rem;
-        margin-bottom: 2rem;
+        font-size: clamp(0.88rem, 3.2vw, 1rem);
+        margin-bottom: 1.8rem;
     }
     
     .services-grid {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 1.25rem;
         padding: 0 1rem;
     }
 
     .service-item {
-        padding: 1.5rem;
+        padding: 1.25rem;
     }
 }
 
 @media (max-width: 480px) {
     .page-header {
-        padding: 100px 0.5rem 60px;
+        padding: 100px 0.75rem 45px;
     }
     
     .page-title {
-        font-size: 2rem;
+        font-size: clamp(1.5rem, 6.5vw, 1.9rem);
         letter-spacing: 1px;
         line-height: 1.2;
     }
 
     .page-subtitle {
-        font-size: 0.9rem;
+        font-size: 0.88rem;
     }
 
     .breadcrumb {
         font-size: 0.8rem;
-        margin-top: 1rem;
+        margin-top: 0.8rem;
     }
     
     .gallery-intro {
         padding: 0 0.5rem;
-        margin-bottom: 2rem;
+        margin-bottom: 1.8rem;
     }
 
     .gallery-description {
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         line-height: 1.5;
     }
     
-    .gallery-grid { padding: 0 0.5rem; }
+    .gallery-grid { 
+        padding: 0 0.5rem; 
+    }
 
     .gallery-item {
-        border-radius: 6px;
+        border-radius: 8px;
     }
     
     .gallery-overlay {
@@ -512,33 +521,34 @@
     }
 
     .gallery-overlay h3 {
-        font-size: 1.1rem;
-        margin-bottom: 0.3rem;
+        font-size: 1.05rem;
+        margin-bottom: 0.25rem;
     }
 
     .gallery-overlay p {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         line-height: 1.4;
     }
     
     .gallery-cta {
-        padding: 2rem 0.5rem;
+        padding: 1.8rem 0.5rem;
     }
 
     .gallery-cta h2 {
-        font-size: 1.5rem;
-        margin-bottom: 0.8rem;
+        font-size: 1.35rem;
+        margin-bottom: 0.6rem;
     }
 
     .gallery-cta p {
-        font-size: 0.9rem;
-        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+        margin-bottom: 1.25rem;
     }
 
     .btn {
-        font-size: 0.9rem;
-        padding: 0.8rem 1.5rem;
-        min-width: 200px;
+        font-size: 0.88rem;
+        padding: 0.8rem 1.4rem;
+        width: 100%;
+        max-width: 260px;
     }
     
     .services-grid {

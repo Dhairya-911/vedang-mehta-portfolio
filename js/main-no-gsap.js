@@ -176,22 +176,38 @@ class OptimizedPortfolio {
 
     // Smooth scrolling without GSAP
     initSmoothScrolling() {
+        const scrollToTarget = (targetId) => {
+            const targetElement = document.querySelector(targetId);
+            if (!targetElement) return;
+
+            // Close mobile menu if open
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            if (menuToggle && navMenu && navMenu.classList.contains('active')) {
+                menuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            }
+
+            const header = document.querySelector('.header');
+            const headerHeight = header ? header.getBoundingClientRect().height : 80;
+            const elementPosition = targetElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerHeight - 15;
+
+            window.scrollTo({
+                top: Math.max(0, offsetPosition),
+                behavior: 'smooth'
+            });
+        };
+
         // Smooth scroll for navigation links
         const navLinks = document.querySelectorAll('.nav-link');
-        
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
-                e.preventDefault();
                 const targetId = link.getAttribute('href');
-                
-                if (targetId.startsWith('#')) {
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
+                if (targetId && targetId.startsWith('#')) {
+                    e.preventDefault();
+                    scrollToTarget(targetId);
                 }
             });
         });
@@ -200,14 +216,10 @@ class OptimizedPortfolio {
         const ctaButtons = document.querySelectorAll('.btn[href^="#"]');
         ctaButtons.forEach(button => {
             button.addEventListener('click', (e) => {
-                e.preventDefault();
                 const targetId = button.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                if (targetId && targetId.startsWith('#')) {
+                    e.preventDefault();
+                    scrollToTarget(targetId);
                 }
             });
         });
