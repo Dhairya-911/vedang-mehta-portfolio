@@ -284,3 +284,20 @@ section,
         padding: 0 1rem;
     }
 }
+
+/* Contact Links */
+.contact-item a,
+.contact-item a:link,
+.contact-item a:visited,
+.contact-link,
+a.contact-link {
+    color: #4a4a37 !important;
+    text-decoration: none !important;
+}
+
+.contact-item a:hover,
+.contact-link:hover,
+a.contact-link:hover {
+    color: #1a1a12 !important;
+    text-decoration: underline !important;
+}
