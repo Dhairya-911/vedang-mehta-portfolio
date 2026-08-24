@@ -27,8 +27,8 @@ class ContactFormHandler {
             // Development environment
             return 'http://localhost:3000/api/contact';
         } else {
-            // Production environment - Update with your actual Render backend URL
-            return 'https://vedang-portfolio-backend.onrender.com/api/contact';
+            // Production environment - Active Render backend URL
+            return 'https://vedang-portfolio-kgdn.onrender.com/api/contact';
         }
     }
 

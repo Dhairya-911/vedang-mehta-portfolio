@@ -20,29 +20,46 @@ app.use(helmet({
 }));
 
 // CORS configuration
-const allowedOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',')
-    : [
-        'http://localhost:5500',
-        'http://127.0.0.1:5500',
-        'http://localhost:8000',
-        'http://127.0.0.1:8000',
-        'http://localhost:3000',
-        'https://vedang-portfolio.vercel.app',
-        'https://vedang-portfolio-kgdn.onrender.com'
-    ];
+const defaultOrigins = [
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'https://vedang-portfolio.vercel.app',
+    'https://vedang-portfolio.netlify.app',
+    'https://vedang-portfolio-kgdn.onrender.com'
+];
 
-app.use(cors({
+const envOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map(o => o.trim().replace(/\/$/, '')).filter(Boolean)
+    : [];
+
+const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
+
+const corsOptions = {
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
+        // Allow requests with no origin (like mobile apps, curl, or server-to-server)
         if (!origin) return callback(null, true);
 
-        // In development, be more permissive
+        // In development, allow all origins
         if (process.env.NODE_ENV === 'development') {
             return callback(null, true);
         }
 
-        if (allowedOrigins.indexOf(origin) !== -1) {
+        const cleanOrigin = origin.replace(/\/$/, '');
+
+        // Check exact match or trusted domain patterns (Vercel, Netlify, Render, Localhost)
+        const isAllowed = 
+            allowedOrigins.includes(cleanOrigin) ||
+            cleanOrigin.endsWith('.vercel.app') ||
+            cleanOrigin.endsWith('.netlify.app') ||
+            cleanOrigin.endsWith('.onrender.com') ||
+            /^https?:\/\/localhost(:\d+)?$/.test(cleanOrigin) ||
+            /^https?:\/\/127\.0\.0\.1(:\d+)?$/.test(cleanOrigin);
+
+        if (isAllowed) {
             callback(null, true);
         } else {
             console.log(`CORS blocked origin: ${origin}`);
@@ -53,8 +70,11 @@ app.use(cors({
     credentials: true,
     optionsSuccessStatus: 200,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -66,6 +86,7 @@ const limiter = rateLimit({
     },
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    skip: (req) => req.method === 'OPTIONS'
 });
 
 app.use(limiter);
@@ -79,8 +100,8 @@ const contactLimiter = rateLimit({
         message: 'Too many contact form submissions. Please try again in 15 minutes.'
     },
     skip: (req, res) => {
-        // Skip rate limiting for GET requests (viewing contacts)
-        return req.method === 'GET';
+        // Skip rate limiting for GET (viewing) and OPTIONS (preflight) requests
+        return req.method === 'GET' || req.method === 'OPTIONS';
     }
 });
 
