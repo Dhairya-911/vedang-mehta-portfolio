@@ -158,8 +158,8 @@ class ContactFormHandler {
                 } else if (value.length > 100) {
                     errorMessage = 'Name cannot exceed 100 characters';
                     isValid = false;
-                } else if (!/^[a-zA-Z\s]+$/.test(value)) {
-                    errorMessage = 'Name can only contain letters and spaces';
+                } else if (!/^[a-zA-Z\s.'-]+$/.test(value)) {
+                    errorMessage = 'Name can only contain letters, spaces, dots, hyphens and apostrophes';
                     isValid = false;
                 }
                 break;
@@ -171,12 +171,19 @@ class ContactFormHandler {
                 } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
                     errorMessage = 'Please enter a valid email address';
                     isValid = false;
+                } else if (value.length > 254) {
+                    errorMessage = 'Email address is too long';
+                    isValid = false;
                 }
                 break;
 
             case 'service':
+                const validServices = ['weddings', 'events', 'corporate', 'concerts', 'product', 'food', 'advertisement'];
                 if (!value) {
                     errorMessage = 'Please select a service';
+                    isValid = false;
+                } else if (!validServices.includes(value)) {
+                    errorMessage = 'Please select a valid service option';
                     isValid = false;
                 }
                 break;
@@ -188,8 +195,8 @@ class ContactFormHandler {
                 } else if (value.length < 10) {
                     errorMessage = 'Message must be at least 10 characters';
                     isValid = false;
-                } else if (value.length > 1000) {
-                    errorMessage = 'Message cannot exceed 1000 characters';
+                } else if (value.length > 2000) {
+                    errorMessage = 'Message cannot exceed 2000 characters';
                     isValid = false;
                 }
                 break;
@@ -281,7 +288,7 @@ class CharacterCounter {
             const counter = document.createElement('div');
             counter.id = 'messageCounter';
             counter.className = 'character-counter';
-            counter.textContent = '0/1000';
+            counter.textContent = '0/2000';
             
             // Add counter after textarea
             this.messageField.parentNode.appendChild(counter);
@@ -295,12 +302,12 @@ class CharacterCounter {
         const counter = document.getElementById('messageCounter');
         if (counter) {
             const length = this.messageField.value.length;
-            counter.textContent = `${length}/1000`;
+            counter.textContent = `${length}/2000`;
             
             // Color coding
-            if (length > 900) {
+            if (length > 1800) {
                 counter.style.color = '#e74c3c';
-            } else if (length > 750) {
+            } else if (length > 1500) {
                 counter.style.color = '#f39c12';
             } else {
                 counter.style.color = '#7f8c8d';

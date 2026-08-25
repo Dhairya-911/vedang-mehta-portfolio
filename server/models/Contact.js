@@ -19,7 +19,7 @@ const contactSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Service selection is required'],
         enum: {
-            values: ['weddings', 'events', 'concerts', 'food'],
+            values: ['weddings', 'events', 'corporate', 'concerts', 'product', 'food', 'advertisement'],
             message: 'Please select a valid service'
         }
     },
@@ -27,7 +27,7 @@ const contactSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Message is required'],
         trim: true,
-        maxLength: [1000, 'Message cannot exceed 1000 characters']
+        maxLength: [2000, 'Message cannot exceed 2000 characters']
     },
     status: {
         type: String,
@@ -61,8 +61,11 @@ contactSchema.virtual('serviceDisplayName').get(function() {
     const serviceNames = {
         weddings: 'Wedding Cinematography',
         events: 'Event Cinematography',
-    concerts: 'Concert Cinematography',
-    food: 'Food Photography'
+        corporate: 'Corporate Films',
+        concerts: 'Concert Cinematography',
+        product: 'Product Photography',
+        food: 'Food Photography',
+        advertisement: 'Advertisement Films'
     };
     return serviceNames[this.service] || this.service;
 });

@@ -28,7 +28,7 @@
 
       body {
         margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         background: var(--bg);
         color: var(--text);
       }
@@ -47,6 +47,9 @@
         background: var(--primary);
         color: #fff;
         padding: 28px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
       }
 
       .brand {
@@ -88,16 +91,41 @@
       }
 
       .nav-item {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 10px;
         padding: 12px 14px;
         border-radius: 10px;
         color: rgba(255,255,255,0.8);
         text-decoration: none;
+        transition: background-color 0.2s ease;
       }
 
       .nav-item.active, .nav-item:hover {
         background: rgba(255,255,255,0.08);
         color: #fff;
+      }
+
+      .sidebar-footer {
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-top: 20px;
+      }
+
+      .logout-btn {
+        width: 100%;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.15);
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .logout-btn:hover {
+        background: #e74c3c;
+        border-color: #e74c3c;
       }
 
       .main {
@@ -106,6 +134,9 @@
 
       .page-header {
         margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
 
       .page-header .eyebrow {
@@ -247,11 +278,6 @@
         color: #3556c8;
       }
 
-      .status-new { background: #e9f2ff; color: #1f5ae1; }
-      .status-read { background: #ebfbf0; color: #19835a; }
-      .status-replied { background: #f2ebff; color: #6434c8; }
-      .status-archived { background: #f0f0ef; color: #4e4d4a; }
-
       .status-select {
         border: 1px solid var(--line);
         background: #fff;
@@ -301,9 +327,78 @@
         padding: 32px;
       }
 
+      /* Modal Backdrop & Dialog */
+      .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+
+      .modal-dialog {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        width: 90%;
+        max-width: 520px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        animation: fadeInScale 0.25s ease forwards;
+      }
+
+      .auth-dialog {
+        max-width: 420px;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .modal-header h3 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--muted);
+        line-height: 1;
+      }
+
+      .modal-close:hover {
+        color: var(--text);
+      }
+
+      @keyframes fadeInScale {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
       @media (max-width: 900px) {
         .dashboard {
           grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          padding: 20px;
         }
 
         .stats-grid {
@@ -322,23 +417,32 @@
   <body>
     <div class="dashboard">
       <aside class="sidebar">
-        <div class="brand">
-          <span class="brand-mark">V</span>
-          <div>
-            <p class="eyebrow">Portfolio</p>
-            <h1>Admin</h1>
+        <div>
+          <div class="brand">
+            <span class="brand-mark">V</span>
+            <div>
+              <p class="eyebrow">Portfolio</p>
+              <h1>Admin</h1>
+            </div>
           </div>
+
+          <nav class="nav">
+            <a class="nav-item active" href="/admin">📊 Dashboard</a>
+          </nav>
         </div>
 
-        <nav class="nav">
-          <a class="nav-item active" href="/admin">Dashboard</a>
-        </nav>
+        <div class="sidebar-footer">
+          <button class="logout-btn" type="button" onclick="logoutAdmin()">🔒 Lock Dashboard</button>
+        </div>
       </aside>
 
       <main class="main">
         <header class="page-header">
-          <p class="eyebrow">Overview</p>
-          <h2>Contact enquiries</h2>
+          <div>
+            <p class="eyebrow">Overview</p>
+            <h2>Contact enquiries</h2>
+          </div>
+          <button class="message-btn" type="button" onclick="loadDashboard()">🔄 Refresh</button>
         </header>
 
         <section class="stats-grid">
