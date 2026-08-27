@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | Vedang Cinematography</title>
+    <style>
+      :root {
+        --bg: #f5f3ef;
+        --panel: #ffffff;
+        --panel-soft: #f7f5f2;
+        --line: #e7e1d7;
+        --text: #1b1b1b;
+        --muted: #5f5c58;
+        --primary: #111111;
+        --primary-soft: #efefeb;
+        --blue: #edf4ff;
+        --blue-text: #1f52d8;
+        --green: #ebfbf0;
+        --green-text: #19835a;
+        --orange: #fff2e7;
+        --orange-text: #c56d1a;
+        --purple: #f2ebff;
+        --purple-text: #6434c8;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      button, input, select {
+        font: inherit;
+      }
+
+      .dashboard {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        background: var(--primary);
+        color: #fff;
+        padding: 28px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 24px;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: #f2efe9;
+        color: var(--primary);
+        font-weight: 700;
+      }
+
+      .eyebrow {
+        margin: 0 0 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 10px;
+        opacity: 0.7;
+      }
+
+      .brand h1, .page-header h2, .table-header h3 {
+        margin: 0;
+      }
+
+      .nav {
+        margin-top: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+      }
+
+      .nav-item.active, .nav-item:hover {
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+      }
+
+      .sidebar-footer {
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-top: 20px;
+      }
+
+      .logout-btn {
+        width: 100%;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.15);
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .logout-btn:hover {
+        background: #e74c3c;
+        border-color: #e74c3c;
+      }
+
+      .main {
+        padding: 32px;
+      }
+
+      .page-header {
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .page-header .eyebrow {
+        color: var(--muted);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(180px, 1fr));
+        gap: 18px;
+        margin-bottom: 28px;
+      }
+
+      .stat-card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 20px 18px;
+      }
+
+      .stat-card .label {
+        display: block;
+        margin-bottom: 10px;
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .stat-card strong {
+        font-size: clamp(26px, 2vw, 38px);
+      }
+
+      .accent-blue { background: var(--blue); }
+      .accent-blue strong { color: var(--blue-text); }
+      .accent-green { background: var(--green); }
+      .accent-green strong { color: var(--green-text); }
+      .accent-orange { background: var(--orange); }
+      .accent-orange strong { color: var(--orange-text); }
+      .accent-purple { background: var(--purple); }
+      .accent-purple strong { color: var(--purple-text); }
+
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+
+      .toolbar-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .toolbar-group label {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .toolbar-group input,
+      .toolbar-group select {
+        min-width: 220px;
+        padding: 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--panel);
+        color: var(--text);
+      }
+
+      .table-panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        overflow: hidden;
+      }
+
+      .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .table-header span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+      }
+
+      th, td {
+        padding: 16px 18px;
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+
+      th {
+        background: var(--panel-soft);
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      tbody tr:hover {
+        background: #faf9f7;
+      }
+
+      .service-pill, .status-pill {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: capitalize;
+      }
+
+      .service-pill {
+        background: #f0efee;
+        color: #31312f;
+      }
+
+      .status-pill {
+        background: #edf1ff;
+        color: #3556c8;
+      }
+
+      .status-select {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 10px;
+        padding: 9px 12px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .status-select:hover {
+        border-color: #888;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      }
+
+      .status-select:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+      }
+
+      .message-btn {
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: var(--primary-soft);
+        color: var(--text);
+        padding: 8px 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+        will-change: transform, box-shadow;
+      }
+
+      .message-btn:hover {
+        background: var(--primary);
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      }
+
+      .message-btn:active {
+        transform: translateY(0);
+      }
+
+      .empty-state {
+        text-align: center;
+        color: var(--muted);
+        padding: 32px;
+      }
+
+      /* Modal Backdrop & Dialog */
+      .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+
+      .modal-dialog {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        width: 90%;
+        max-width: 520px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        animation: fadeInScale 0.25s ease forwards;
+      }
+
+      .auth-dialog {
+        max-width: 420px;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .modal-header h3 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--muted);
+        line-height: 1;
+      }
+
+      .modal-close:hover {
+        color: var(--text);
+      }
+
+      @keyframes fadeInScale {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @media (max-width: 900px) {
+        .dashboard {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          padding: 20px;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(2, minmax(160px, 1fr));
+        }
+      }
+
+      @media (max-width: 560px) {
+        .main { padding: 20px 14px; }
+        .stats-grid { grid-template-columns: 1fr; }
+        .toolbar { align-items: stretch; }
+        .toolbar-group, .toolbar-group input, .toolbar-group select { width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard">
+      <aside class="sidebar">
+        <div>
+          <div class="brand">
+            <span class="brand-mark">V</span>
+            <div>
+              <p class="eyebrow">Portfolio</p>
+              <h1>Admin</h1>
+            </div>
+          </div>
+
+          <nav class="nav">
+            <a class="nav-item active" href="/admin">📊 Dashboard</a>
+          </nav>
+        </div>
+
+        <div class="sidebar-footer">
+          <button class="logout-btn" type="button" onclick="logoutAdmin()">🔒 Lock Dashboard</button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="page-header">
+          <div>
+            <p class="eyebrow">Overview</p>
+            <h2>Contact enquiries</h2>
+          </div>
+          <button class="message-btn" type="button" onclick="loadDashboard()">🔄 Refresh</button>
+        </header>
+
+        <section class="stats-grid">
+          <article class="stat-card accent-blue">
+            <span class="label">Total</span>
+            <strong id="totalContacts">0</strong>
+          </article>
+          <article class="stat-card accent-green">
+            <span class="label">New</span>
+            <strong id="newContacts">0</strong>
+          </article>
+          <article class="stat-card accent-orange">
+            <span class="label">Read</span>
+            <strong id="readContacts">0</strong>
+          </article>
+          <article class="stat-card accent-purple">
+            <span class="label">Replied</span>
+            <strong id="repliedContacts">0</strong>
+          </article>
+        </section>
+
+        <section class="toolbar">
+          <div class="toolbar-group">
+            <label for="searchInput">Search</label>
+            <input id="searchInput" type="text" placeholder="Name, email or service" />
+          </div>
+          <div class="toolbar-group">
+            <label for="statusFilter">Status</label>
+            <select id="statusFilter">
+              <option value="">All statuses</option>
+              <option value="new">New</option>
+              <option value="read">Read</option>
+              <option value="replied">Replied</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+        </section>
+
+        <section class="table-panel">
+          <div class="table-header">
+            <h3>Recent enquiries</h3>
+            <span id="recordsCount">0 records</span>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Service</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="contactTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/admin/admin.js"></script>
+  </body>
+</html>

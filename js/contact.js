@@ -1,13 +1,20 @@
 // Contact Form Handler with MongoDB Integration
 class ContactFormHandler {
     constructor() {
+        console.log('🔧 ContactFormHandler constructor called');
+        
         // Determine API URL based on environment
         this.apiUrl = this.getApiUrl();
+        console.log('🌐 API URL:', this.apiUrl);
+        
         this.form = document.getElementById('contactForm');
         this.submitBtn = document.getElementById('submitBtn');
         this.submitText = document.getElementById('submitText');
         this.submitLoader = document.getElementById('submitLoader');
         this.formStatus = document.getElementById('formStatus');
+        
+        console.log('📝 Form element found:', !!this.form);
+        console.log('🔘 Submit button found:', !!this.submitBtn);
         
         this.init();
     }
@@ -19,17 +26,17 @@ class ContactFormHandler {
         if (hostname === 'localhost' || hostname === '127.0.0.1') {
             // Development environment
             return 'http://localhost:3000/api/contact';
-        } else if (hostname.includes('onrender.com')) {
-            // If hosted on the same Render service
-            return '/api/contact';
         } else {
-            // Production environment - deployed Render backend
+            // Production environment - Active Render backend URL
             return 'https://vedang-portfolio-kgdn.onrender.com/api/contact';
         }
     }
 
     init() {
+        console.log('🚀 Initializing contact form handler...');
+        
         if (this.form) {
+            console.log('✅ Adding submit event listener to form');
             this.form.addEventListener('submit', this.handleSubmit.bind(this));
             
             // Real-time validation
@@ -38,16 +45,25 @@ class ContactFormHandler {
                 input.addEventListener('blur', () => this.validateField(input));
                 input.addEventListener('input', () => this.clearFieldError(input));
             });
+            
+            console.log('✅ Form handler initialized successfully');
+        } else {
+            console.error('❌ Contact form not found!');
         }
     }
 
     async handleSubmit(e) {
+        console.log('📤 Form submission started');
         e.preventDefault();
+        console.log('✅ Default form submission prevented');
         
         // Validate form
         if (!this.validateForm()) {
+            console.log('❌ Form validation failed');
             return;
         }
+
+        console.log('✅ Form validation passed');
 
         // Collect form data
         const formData = new FormData(this.form);
@@ -58,9 +74,13 @@ class ContactFormHandler {
             message: formData.get('message').trim()
         };
 
+        console.log('📋 Form data collected:', data);
+
         try {
             this.setSubmitState(true);
             this.hideStatus();
+
+            console.log('🌐 Sending request to:', this.apiUrl);
 
             // Submit to MongoDB backend
             const response = await fetch(this.apiUrl, {
@@ -71,19 +91,15 @@ class ContactFormHandler {
                 body: JSON.stringify(data)
             });
 
+            console.log('📥 Response received:', response.status, response.statusText);
+
             const result = await response.json();
+            console.log('📄 Response data:', result);
 
             if (result.success) {
-                // Show success message with enhanced user feedback
-                const successMessage = result.message || 'Thank you! Your message has been sent successfully. I\'ll get back to you within 24 hours.';
-                this.showSuccess(successMessage);
+                this.showSuccess(result.message);
                 this.form.reset();
                 this.clearAllErrors();
-                
-                // Auto-hide success message after 5 seconds
-                setTimeout(() => {
-                    this.hideStatus();
-                }, 5000);
                 
                 // Optional: Track successful submission
                 if (typeof gtag !== 'undefined') {
@@ -98,7 +114,7 @@ class ContactFormHandler {
             }
 
         } catch (error) {
-            console.error('Form submission error:', error);
+            console.error('❌ Form submission error:', error);
             this.showError('Network error. Please check your connection and try again.');
         } finally {
             this.setSubmitState(false);
@@ -142,8 +158,8 @@ class ContactFormHandler {
                 } else if (value.length > 100) {
                     errorMessage = 'Name cannot exceed 100 characters';
                     isValid = false;
-                } else if (!/^[a-zA-Z\s]+$/.test(value)) {
-                    errorMessage = 'Name can only contain letters and spaces';
+                } else if (!/^[a-zA-Z\s.'-]+$/.test(value)) {
+                    errorMessage = 'Name can only contain letters, spaces, dots, hyphens and apostrophes';
                     isValid = false;
                 }
                 break;
@@ -155,12 +171,19 @@ class ContactFormHandler {
                 } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
                     errorMessage = 'Please enter a valid email address';
                     isValid = false;
+                } else if (value.length > 254) {
+                    errorMessage = 'Email address is too long';
+                    isValid = false;
                 }
                 break;
 
             case 'service':
+                const validServices = ['weddings', 'events', 'corporate', 'concerts', 'product', 'food', 'advertisement'];
                 if (!value) {
                     errorMessage = 'Please select a service';
+                    isValid = false;
+                } else if (!validServices.includes(value)) {
+                    errorMessage = 'Please select a valid service option';
                     isValid = false;
                 }
                 break;
@@ -172,8 +195,8 @@ class ContactFormHandler {
                 } else if (value.length < 10) {
                     errorMessage = 'Message must be at least 10 characters';
                     isValid = false;
-                } else if (value.length > 1000) {
-                    errorMessage = 'Message cannot exceed 1000 characters';
+                } else if (value.length > 2000) {
+                    errorMessage = 'Message cannot exceed 2000 characters';
                     isValid = false;
                 }
                 break;
@@ -223,34 +246,12 @@ class ContactFormHandler {
 
     showSuccess(message) {
         this.formStatus.className = 'form-status success show';
-        this.formStatus.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="color: #27ae60; font-size: 1.2em;">✓</span>
-                <span>${message}</span>
-            </div>
-        `;
-        
-        // Scroll to message if needed
-        this.formStatus.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'nearest' 
-        });
+        this.formStatus.textContent = message;
     }
 
     showError(message) {
         this.formStatus.className = 'form-status error show';
-        this.formStatus.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="color: #e74c3c; font-size: 1.2em;">⚠</span>
-                <span>${message}</span>
-            </div>
-        `;
-        
-        // Scroll to message if needed
-        this.formStatus.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'nearest' 
-        });
+        this.formStatus.textContent = message;
     }
 
     hideStatus() {
@@ -287,7 +288,7 @@ class CharacterCounter {
             const counter = document.createElement('div');
             counter.id = 'messageCounter';
             counter.className = 'character-counter';
-            counter.textContent = '0/1000';
+            counter.textContent = '0/2000';
             
             // Add counter after textarea
             this.messageField.parentNode.appendChild(counter);
@@ -301,12 +302,12 @@ class CharacterCounter {
         const counter = document.getElementById('messageCounter');
         if (counter) {
             const length = this.messageField.value.length;
-            counter.textContent = `${length}/1000`;
+            counter.textContent = `${length}/2000`;
             
             // Color coding
-            if (length > 900) {
+            if (length > 1800) {
                 counter.style.color = '#e74c3c';
-            } else if (length > 750) {
+            } else if (length > 1500) {
                 counter.style.color = '#f39c12';
             } else {
                 counter.style.color = '#7f8c8d';
@@ -315,30 +316,36 @@ class CharacterCounter {
     }
 }
 
-// Initialize contact form and helpers in a way that works whether this
-// script is loaded before or after DOMContentLoaded (handles dynamic loading).
-function initContact() {
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM Content Loaded - Initializing contact form...');
+    
     try {
-        new ContactFormHandler();
-    } catch (e) {
-        console.error('ContactFormHandler init error:', e);
+        const contactHandler = new ContactFormHandler();
+        const characterCounter = new CharacterCounter();
+        console.log('✅ Contact form and character counter initialized successfully');
+    } catch (error) {
+        console.error('❌ Error initializing contact form:', error);
     }
+});
 
-    try {
-        new CharacterCounter();
-    } catch (e) {
-        // CharacterCounter is optional; fail silently if not present
+// Also try to initialize on window load as a fallback
+window.addEventListener('load', function() {
+    console.log('🌐 Window loaded - Checking if contact form needs initialization...');
+    
+    // Check if form handler is already initialized
+    if (!window.contactFormHandler) {
+        console.log('🔄 Initializing contact form on window load...');
+        try {
+            window.contactFormHandler = new ContactFormHandler();
+            console.log('✅ Contact form initialized on window load');
+        } catch (error) {
+            console.error('❌ Error initializing contact form on window load:', error);
+        }
     }
-}
+});
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initContact);
-} else {
-    // DOM already ready — initialize immediately
-    initContact();
-}
-
-// Add CSS for character counter and form status
+// Add CSS for character counter
 const counterCSS = `
 .character-counter {
     font-size: 0.8rem;
@@ -346,35 +353,6 @@ const counterCSS = `
     text-align: right;
     margin-top: 0.25rem;
     font-weight: 500;
-}
-
-.form-status {
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 20px;
-    font-weight: 500;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
-    display: none;
-}
-
-.form-status.show {
-    opacity: 1;
-    transform: translateY(0);
-    display: block;
-}
-
-.form-status.success {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
-}
-
-.form-status.error {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color: #721c24;
 }
 `;
 
